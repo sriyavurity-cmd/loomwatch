@@ -1,4 +1,4 @@
-# Loomwatch — Founder's Ops Copilot
+# Loomwatch : Founder's Ops Copilot
 **Live demo:** https://loomwatch.vercel.app
 A lightweight internal tool for a startup founder: track leads, manage tasks,
 and — the differentiating piece — a knowledge base with **clearance-filtered
