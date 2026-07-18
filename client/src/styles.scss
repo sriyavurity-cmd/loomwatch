@@ -1,0 +1,95 @@
+/* ============================================================
+   Loomwatch design tokens — "observation deck" aesthetic.
+   An instrument panel for watching social dynamics unfold,
+   not a chat app. Ink-dark surfaces, phosphor-amber signal,
+   monospace data readouts like an old CRT monitoring rig.
+   ============================================================ */
+
+:root {
+  /* Color */
+  --ink: #0b0e14;
+  --ink-raised: #12161f;
+  --slate: #1b2130;
+  --slate-line: #2a3142;
+  --paper: #e8e6df;
+  --paper-dim: #9aa0ad;
+  --amber: #f2a65a;
+  --amber-dim: #a8763f;
+  --teal: #4fd1c5;
+  --crimson: #e8685d;
+
+  /* Type */
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Layout */
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(242, 166, 90, 0.05), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(79, 209, 197, 0.04), transparent 45%);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--amber);
+  color: var(--ink);
+}
+
+/* scrollbars matching the instrument-panel feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ink-raised);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--slate-line);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--amber-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
