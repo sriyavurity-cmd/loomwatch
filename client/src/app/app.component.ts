@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, signal } from "@angular/core";
 import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { AuthService } from "./core/auth.service";
@@ -15,17 +15,41 @@ import { Router } from "@angular/router";
           <span class="brand-mark">◎</span>
           <span class="brand-name">LOOMWATCH</span>
         </div>
-        <nav>
+
+        <!-- Desktop nav: hidden on small screens -->
+        <nav class="desktop-nav">
           <a routerLink="/leads" routerLinkActive="active">Leads</a>
           <a routerLink="/tasks" routerLinkActive="active">Tasks</a>
           <a routerLink="/knowledge" routerLinkActive="active">Knowledge Base</a>
         </nav>
-        <div class="user">
+        <div class="user desktop-nav">
           <span class="role-badge" [class.founder]="user.role === 'founder'">{{ user.role }}</span>
           <span class="user-name">{{ user.name }}</span>
           <button class="logout" (click)="logout()">Sign out</button>
         </div>
+
+        <!-- Mobile: hamburger toggle, hidden on larger screens -->
+        <button class="menu-toggle" (click)="menuOpen.set(!menuOpen())" [attr.aria-expanded]="menuOpen()">
+          <span></span><span></span><span></span>
+        </button>
       </header>
+
+      <!-- Mobile dropdown panel -->
+      <div class="mobile-panel" *ngIf="menuOpen()">
+        <div class="mobile-user">
+          <span class="role-badge" [class.founder]="auth.currentUser()?.role === 'founder'">
+            {{ auth.currentUser()?.role }}
+          </span>
+          <span class="user-name">{{ auth.currentUser()?.name }}</span>
+        </div>
+        <nav class="mobile-nav">
+          <a routerLink="/leads" routerLinkActive="active" (click)="menuOpen.set(false)">Leads</a>
+          <a routerLink="/tasks" routerLinkActive="active" (click)="menuOpen.set(false)">Tasks</a>
+          <a routerLink="/knowledge" routerLinkActive="active" (click)="menuOpen.set(false)">Knowledge Base</a>
+        </nav>
+        <button class="logout mobile-logout" (click)="logout()">Sign out</button>
+      </div>
+
       <main>
         <router-outlet></router-outlet>
       </main>
@@ -60,6 +84,7 @@ import { Router } from "@angular/router";
         font-weight: 700;
         letter-spacing: 0.04em;
         font-size: 15px;
+        flex-shrink: 0;
       }
       .brand-mark {
         color: var(--amber);
@@ -72,6 +97,11 @@ import { Router } from "@angular/router";
       nav {
         display: flex;
         gap: 4px;
+      }
+      .desktop-nav.user {
+        margin-left: auto;
+      }
+      nav.desktop-nav {
         flex: 1;
       }
       nav a {
@@ -111,6 +141,7 @@ import { Router } from "@angular/router";
         border-radius: 20px;
         background: var(--slate);
         color: var(--paper-dim);
+        flex-shrink: 0;
       }
       .role-badge.founder {
         background: rgba(242, 166, 90, 0.15);
@@ -131,15 +162,92 @@ import { Router } from "@angular/router";
         color: var(--crimson);
       }
 
+      /* Hamburger toggle - hidden by default, shown only on small screens */
+      .menu-toggle {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        width: 32px;
+        height: 32px;
+        background: transparent;
+        border: 1px solid var(--slate-line);
+        border-radius: var(--radius-sm);
+        margin-left: auto;
+        flex-shrink: 0;
+      }
+      .menu-toggle span {
+        display: block;
+        width: 16px;
+        height: 1.5px;
+        background: var(--paper-dim);
+        margin: 0 auto;
+      }
+
+      .mobile-panel {
+        display: none;
+      }
+
       main {
         flex: 1;
         display: flex;
         flex-direction: column;
       }
+
+      /* ---- Responsive breakpoint ---- */
+      @media (max-width: 680px) {
+        .topbar {
+          gap: 12px;
+          padding: 0 16px;
+        }
+        .desktop-nav {
+          display: none;
+        }
+        .menu-toggle {
+          display: flex;
+        }
+        .brand-name {
+          font-size: 13px;
+        }
+
+        .mobile-panel {
+          display: flex;
+          flex-direction: column;
+          background: var(--ink-raised);
+          border-bottom: 1px solid var(--slate-line);
+          padding: 14px 16px 18px;
+          gap: 14px;
+          position: sticky;
+          top: 60px;
+          z-index: 9;
+        }
+        .mobile-user {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-family: var(--font-mono);
+          font-size: 12.5px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid var(--slate-line);
+        }
+        .mobile-nav {
+          flex-direction: column;
+          gap: 2px;
+        }
+        .mobile-nav a {
+          padding: 12px 14px;
+          font-size: 14.5px;
+        }
+        .mobile-logout {
+          align-self: flex-start;
+        }
+      }
     `
   ]
 })
 export class AppComponent {
+  menuOpen = signal(false);
+
   constructor(
     public auth: AuthService,
     private router: Router
